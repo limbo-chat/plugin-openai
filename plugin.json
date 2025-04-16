@@ -1,4 +1,5 @@
 {
+	"$schema": "./node_modules/limbo/schemas/plugin.json",
 	"id": "openai",
 	"name": "OpenAI",
 	"version": "0.0.1",

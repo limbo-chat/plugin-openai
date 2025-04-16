@@ -6,8 +6,9 @@ export function activate() {
 	limbo.settings.register({
 		id: "api-key",
 		type: "text",
-		title: "API Key",
-		helpText: "Your OpenAI API key",
+		label: "API Key",
+		description: "Your OpenAI API key",
+		placeholder: "sk-...",
 		variant: "password",
 	});
 
@@ -15,13 +16,14 @@ export function activate() {
 
 	limbo.llms.register({
 		id: "gpt-4o-mini",
-		title: "GPT-4o mini",
+		name: "GPT-4o mini",
 		description: "GPT-4o mini",
 		generateText: async () => {
 			const apiKey = limbo.settings.get("api-key");
 
 			if (typeof apiKey !== "string") {
 				limbo.notifications.show({
+					type: "error",
 					message: "You must set your API key",
 				});
 
