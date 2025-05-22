@@ -1,41 +1,79 @@
 import * as limbo from "limbo";
+import { OpenAIClient } from "openai-fetch";
 
-export function activate() {
-	// --- settings ---
+/**
+ * Considerations:
+ * - I will probably end up making an openai-compatible utility for plugins to use, including this one
+ */
 
-	limbo.settings.register({
-		id: "api-key",
-		type: "text",
-		label: "API Key",
-		description: "Your OpenAI API key",
-		placeholder: "sk-...",
-		variant: "password",
-	});
+const models = [
+	{
+		id: "o4-mini",
+		name: "o4-mini",
+		description: "Faster, more affordable reasoning model",
+	},
+] as const;
 
-	// --- llms ---
+export default {
+	onActivate: async () => {
+		console.log("OpenAI plugin activated");
 
-	limbo.llms.register({
-		id: "gpt-4o-mini",
-		name: "GPT-4o mini",
-		description: "GPT-4o mini",
-		generateText: async () => {
-			const apiKey = limbo.settings.get("api-key");
+		// --- settings ---
 
-			if (typeof apiKey !== "string") {
-				limbo.notifications.show({
-					type: "error",
-					message: "You must set your API key",
-				});
+		limbo.settings.register({
+			id: "api_key",
+			type: "text",
+			label: "API Key",
+			description: "Your OpenAI API key",
+			placeholder: "sk-...",
+			variant: "password",
+		});
 
-				// todo need a safe way to cancel
-				// maybe should just be error throwing or maybe you should be able to throw a notification optionally?
+		for (const model of models) {
+			limbo.models.registerLLM({
+				id: model.id,
+				name: model.name,
+				description: model.description,
+				generateText: async ({ promptBuilder, onChunk }) => {
+					const apiKey = limbo.settings.get("api_key");
 
-				throw new Error("temp error");
-			}
+					if (typeof apiKey !== "string") {
+						return limbo.notifications.show({
+							type: "warning",
+							message: "You must provide an API key to use OpenAI models",
+						});
+					}
 
-			console.log("using api key to generate text", apiKey);
+					const client = new OpenAIClient({ apiKey });
 
-			return "hello world!";
-		},
-	});
-}
+					const response = await client.streamChatCompletion({
+						model: model.id,
+						messages: promptBuilder.getMessages(),
+					});
+
+					const reader = response.getReader();
+
+					while (true) {
+						const readResult = await reader.read();
+
+						if (readResult.done) {
+							break;
+						}
+
+						const chunk = readResult.value;
+
+						if (!chunk) {
+							return;
+						}
+
+						const chunkText = chunk.choices[0]?.delta.content;
+
+						if (chunkText) {
+							onChunk(chunkText);
+						}
+					}
+				},
+			});
+		}
+	},
+} satisfies limbo.Plugin;
