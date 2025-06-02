@@ -7,11 +7,11 @@
 		"dev": "rollup -c --watch"
 	},
 	"dependencies": {
-		"openai-fetch": "^3.4.2"
+		"limbo": "file:../limbo-api",
+		"@limbo/openai-utils": "file:../limbo-openai-utils"
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^16.0.1",
-		"limbo": "file:~/coding/node/oss/limbo-api",
 		"prettier": "^3.5.3",
 		"rollup": "^4.40.1",
 		"rollup-plugin-esbuild": "^6.2.1",
