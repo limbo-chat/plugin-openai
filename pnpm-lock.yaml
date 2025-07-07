@@ -8,16 +8,19 @@ importers:
 
   .:
     dependencies:
-      '@limbo/openai-utils':
-        specifier: file:../limbo-openai-utils
-        version: file:../limbo-openai-utils(limbo@file:../limbo-api)
-      limbo:
+      '@limbo/api':
         specifier: file:../limbo-api
         version: file:../limbo-api
+      '@limbo/openai-utils':
+        specifier: file:../limbo-openai-utils
+        version: file:../limbo-openai-utils
     devDependencies:
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.1
         version: 16.0.1(rollup@4.41.0)
+      dotenv:
+        specifier: ^17.0.1
+        version: 17.0.1
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
@@ -186,6 +189,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@limbo/api@file:../limbo-api':
+    resolution: {directory: ../limbo-api, type: directory}
+
   '@limbo/openai-utils@file:../limbo-openai-utils':
     resolution: {directory: ../limbo-openai-utils, type: directory}
     peerDependencies:
@@ -337,6 +343,10 @@ packages:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
     engines: {node: '>=0.10.0'}
 
+  dotenv@17.0.1:
+    resolution: {integrity: sha512-GLjkduuAL7IMJg/ZnOPm9AnWKJ82mSE2tzXLaJ/6hD6DhwGfZaXG77oB8qbReyiczNxnbxQKyh0OE5mXq0bAHA==}
+    engines: {node: '>=12'}
+
   es-module-lexer@1.7.0:
     resolution: {integrity: sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==}
 
@@ -369,9 +379,6 @@ packages:
 
   is-module@1.0.0:
     resolution: {integrity: sha512-51ypPSPCoTEIN9dy5Oy+h4pShgJmPCygKfyRCISBI+JoWT/2oJvK8QPxmwv7b/p239jXrm9M1mlQbyKJ5A152g==}
-
-  limbo@file:../limbo-api:
-    resolution: {directory: ../limbo-api, type: directory}
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -510,9 +517,13 @@ snapshots:
   '@esbuild/win32-x64@0.25.4':
     optional: true
 
-  '@limbo/openai-utils@file:../limbo-openai-utils(limbo@file:../limbo-api)':
-    dependencies:
-      limbo: file:../limbo-api
+  '@limbo/api@file:../limbo-api':
+    optionalDependencies:
+      '@sinclair/typebox': 0.34.33
+      '@types/react': 19.1.6
+      react: 19.1.0
+
+  '@limbo/openai-utils@file:../limbo-openai-utils': {}
 
   '@rollup/plugin-node-resolve@16.0.1(rollup@4.41.0)':
     dependencies:
@@ -613,6 +624,8 @@ snapshots:
 
   deepmerge@4.3.1: {}
 
+  dotenv@17.0.1: {}
+
   es-module-lexer@1.7.0: {}
 
   esbuild@0.25.4:
@@ -663,12 +676,6 @@ snapshots:
       hasown: 2.0.2
 
   is-module@1.0.0: {}
-
-  limbo@file:../limbo-api:
-    optionalDependencies:
-      '@sinclair/typebox': 0.34.33
-      '@types/react': 19.1.6
-      react: 19.1.0
 
   ms@2.1.3: {}
 

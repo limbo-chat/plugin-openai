@@ -7,11 +7,12 @@
 		"dev": "rollup -c --watch"
 	},
 	"dependencies": {
-		"limbo": "file:../limbo-api",
+		"@limbo/api": "file:../limbo-api",
 		"@limbo/openai-utils": "file:../limbo-openai-utils"
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^16.0.1",
+		"dotenv": "^17.0.1",
 		"prettier": "^3.5.3",
 		"rollup": "^4.40.1",
 		"rollup-plugin-esbuild": "^6.2.1",

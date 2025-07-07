@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { defineConfig } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import esbuild from "rollup-plugin-esbuild";
@@ -11,7 +12,7 @@ export default defineConfig({
 		dir: "build",
 	},
 	// these modules are not bundled and will be provided by the limbo app
-	external: ["limbo"],
+	external: ["@limbo/api"],
 	plugins: [
 		nodeResolve(),
 		esbuild({
@@ -19,6 +20,7 @@ export default defineConfig({
 		}),
 		limbo({
 			copyToPluginsDir: true,
+			pluginsDir: process.env.LIMBO_PLUGINS_DIR_PATH,
 			/*
 				if you only want to copy the built plugin to the plugins directory during dev mode
 				copyToPluginsDir: !isProd,

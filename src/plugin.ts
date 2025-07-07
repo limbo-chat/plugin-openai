@@ -1,5 +1,8 @@
-import * as limbo from "limbo";
+import * as limbo from "@limbo/api";
 import {
+	convertMessagesToOpenAICompatible,
+	convertToolIdToOpenAICompatible,
+	convertToolsToOpenAICompatible,
 	FetchAdapter,
 	OpenAICompatibleClient,
 	streamOpenAICompatibleChatCompletion,
@@ -58,7 +61,7 @@ export default {
 				name: model.name,
 				description: model.description,
 				capabilities: model.capabilities,
-				streamText: async ({ tools, messages, onText, onToolCall }) => {
+				chat: async ({ tools, messages, onText, onToolCall, abortSignal }) => {
 					const apiKey = limbo.settings.get("api_key");
 
 					if (typeof apiKey !== "string") {
@@ -71,13 +74,92 @@ export default {
 						apiKey,
 					});
 
-					await streamOpenAICompatibleChatCompletion(client, {
+					const openAITools = convertToolsToOpenAICompatible(tools);
+					const openAIMessages = convertMessagesToOpenAICompatible(messages);
+
+					const originalToolIdMap = new Map<string, string>();
+
+					for (const tool of tools) {
+						const openAICompatibleId = convertToolIdToOpenAICompatible(tool.id);
+
+						originalToolIdMap.set(openAICompatibleId, tool.id);
+					}
+
+					const stream = streamOpenAICompatibleChatCompletion(client, {
 						model: model.id,
-						tools,
-						messages,
-						onText,
-						onToolCall,
+						tools: openAITools,
+						messages: openAIMessages,
+						abortSignal,
 					});
+
+					const collectedToolCalls: any[] = [];
+
+					for await (const chunk of stream) {
+						const text = chunk.content;
+						const partialToolCalls = chunk.tool_calls;
+
+						if (text) {
+							onText(text);
+						}
+
+						if (partialToolCalls) {
+							for (const partialToolCall of partialToolCalls) {
+								const toolInfo = partialToolCall.function;
+
+								if (!toolInfo) {
+									continue;
+								}
+
+								const partialToolCallIdx = partialToolCall.index;
+
+								if (typeof partialToolCallIdx !== "number") {
+									continue;
+								}
+
+								const toolCall = collectedToolCalls[partialToolCallIdx];
+
+								if (toolCall) {
+									if (toolInfo.name) {
+										// note: not sure if the name can be added to during the stream
+										toolCall.id += toolInfo.name;
+									}
+
+									if (typeof toolInfo.arguments === "string") {
+										toolCall.arguments += toolInfo.arguments;
+									}
+								} else {
+									collectedToolCalls.push({
+										id: toolInfo.name,
+										arguments: toolInfo.arguments || "",
+									});
+								}
+							}
+						}
+					}
+
+					for (const collectedToolCall of collectedToolCalls) {
+						const originalToolId = originalToolIdMap.get(collectedToolCall.id);
+
+						if (!originalToolId) {
+							// this will probably never happen
+							throw new Error(`Unknown tool call ID: ${collectedToolCall.id}`);
+						}
+
+						let parsedArguments;
+
+						try {
+							parsedArguments = JSON.parse(collectedToolCall.arguments);
+						} catch {
+							parsedArguments = {};
+						}
+
+						console.log(originalToolId);
+
+						onToolCall({
+							toolId: originalToolId,
+							arguments: parsedArguments,
+						});
+					}
 				},
 			});
 		}
