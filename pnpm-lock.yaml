@@ -13,7 +13,7 @@ importers:
         version: file:../limbo-api
       '@limbo/openai-utils':
         specifier: file:../limbo-openai-utils
-        version: file:../limbo-openai-utils
+        version: file:../limbo-openai-utils(@limbo/api@file:../limbo-api)
     devDependencies:
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.1
@@ -195,7 +195,7 @@ packages:
   '@limbo/openai-utils@file:../limbo-openai-utils':
     resolution: {directory: ../limbo-openai-utils, type: directory}
     peerDependencies:
-      limbo: file:../limbo-api
+      '@limbo/api': '>=0.0.0'
 
   '@rollup/plugin-node-resolve@16.0.1':
     resolution: {integrity: sha512-tk5YCxJWIG81umIvNkSod2qK5KyQW19qcBF/B78n1bjtOON6gzKoVeSzAE8yHCZEDmqkHKkxplExA8KzdJLJpA==}
@@ -523,7 +523,9 @@ snapshots:
       '@types/react': 19.1.6
       react: 19.1.0
 
-  '@limbo/openai-utils@file:../limbo-openai-utils': {}
+  '@limbo/openai-utils@file:../limbo-openai-utils(@limbo/api@file:../limbo-api)':
+    dependencies:
+      '@limbo/api': file:../limbo-api
 
   '@rollup/plugin-node-resolve@16.0.1(rollup@4.41.0)':
     dependencies:

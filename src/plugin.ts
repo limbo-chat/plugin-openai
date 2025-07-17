@@ -2,7 +2,7 @@ import * as limbo from "@limbo/api";
 import {
 	convertMessagesToOpenAICompatible,
 	convertToolIdToOpenAICompatible,
-	convertToolsToOpenAICompatible,
+	convertToolDefinitionsToOpenAICompatible,
 	FetchAdapter,
 	OpenAICompatibleClient,
 	streamOpenAICompatibleChatCompletion,
@@ -61,7 +61,7 @@ export default {
 				name: model.name,
 				description: model.description,
 				capabilities: model.capabilities,
-				chat: async ({ tools, messages, onText, onToolCall, abortSignal }) => {
+				chat: async ({ tools, prompt, onText, onToolCall, abortSignal }) => {
 					const apiKey = limbo.settings.get("api_key");
 
 					if (typeof apiKey !== "string") {
@@ -74,8 +74,8 @@ export default {
 						apiKey,
 					});
 
-					const openAITools = convertToolsToOpenAICompatible(tools);
-					const openAIMessages = convertMessagesToOpenAICompatible(messages);
+					const openAITools = convertToolDefinitionsToOpenAICompatible(tools);
+					const openAIMessages = convertMessagesToOpenAICompatible(prompt.getMessages());
 
 					const originalToolIdMap = new Map<string, string>();
 
@@ -152,8 +152,6 @@ export default {
 						} catch {
 							parsedArguments = {};
 						}
-
-						console.log(originalToolId);
 
 						onToolCall({
 							toolId: originalToolId,
