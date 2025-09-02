@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@limbo/api':
-        specifier: file:../limbo-api
-        version: file:../limbo-api
+      '@limbo-chat/api':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@limbo/openai-utils':
         specifier: file:../limbo-openai-utils
-        version: file:../limbo-openai-utils(@limbo/api@file:../limbo-api)
+        version: '@limbo-chat/openai-utils@file:../limbo-openai-utils(@limbo-chat/api@0.0.1)'
     devDependencies:
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.1
@@ -31,8 +31,8 @@ importers:
         specifier: ^6.2.1
         version: 6.2.1(esbuild@0.25.4)(rollup@4.41.0)
       rollup-plugin-limbo:
-        specifier: file:../rollup-plugin-limbo
-        version: file:../rollup-plugin-limbo(rollup@4.41.0)
+        specifier: ^0.0.1
+        version: 0.0.1(rollup@4.41.0)
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -189,13 +189,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@limbo/api@file:../limbo-api':
-    resolution: {directory: ../limbo-api, type: directory}
+  '@limbo-chat/api@0.0.1':
+    resolution: {integrity: sha512-vUL++C3VdXSVCLGXP+NDYTpGDG1x9lb4YXoVeDJ8/C/ptwohvbrydkx8pITlFG6sOhWuo1yQ4rWGasxeBp5lgg==}
 
-  '@limbo/openai-utils@file:../limbo-openai-utils':
+  '@limbo-chat/openai-utils@file:../limbo-openai-utils':
     resolution: {directory: ../limbo-openai-utils, type: directory}
     peerDependencies:
-      '@limbo/api': '>=0.0.0'
+      '@limbo-chat/api': ^0.0.1
 
   '@rollup/plugin-node-resolve@16.0.1':
     resolution: {integrity: sha512-tk5YCxJWIG81umIvNkSod2qK5KyQW19qcBF/B78n1bjtOON6gzKoVeSzAE8yHCZEDmqkHKkxplExA8KzdJLJpA==}
@@ -417,8 +417,8 @@ packages:
       esbuild: '>=0.18.0'
       rollup: ^1.20.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
 
-  rollup-plugin-limbo@file:../rollup-plugin-limbo:
-    resolution: {directory: ../rollup-plugin-limbo, type: directory}
+  rollup-plugin-limbo@0.0.1:
+    resolution: {integrity: sha512-soQXo4IPj/9pP38CVV5FslLBHR5iTUBvO69Pv2CI1gyYgtXgjlXdPmSpAAcufym8S7/Va8yU5NIRIYSQM5nkYA==}
     peerDependencies:
       rollup: ^4.40.1
 
@@ -517,15 +517,15 @@ snapshots:
   '@esbuild/win32-x64@0.25.4':
     optional: true
 
-  '@limbo/api@file:../limbo-api':
+  '@limbo-chat/api@0.0.1':
     optionalDependencies:
       '@sinclair/typebox': 0.34.33
       '@types/react': 19.1.6
       react: 19.1.0
 
-  '@limbo/openai-utils@file:../limbo-openai-utils(@limbo/api@file:../limbo-api)':
+  '@limbo-chat/openai-utils@file:../limbo-openai-utils(@limbo-chat/api@0.0.1)':
     dependencies:
-      '@limbo/api': file:../limbo-api
+      '@limbo-chat/api': 0.0.1
 
   '@rollup/plugin-node-resolve@16.0.1(rollup@4.41.0)':
     dependencies:
@@ -711,7 +711,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  rollup-plugin-limbo@file:../rollup-plugin-limbo(rollup@4.41.0):
+  rollup-plugin-limbo@0.0.1(rollup@4.41.0):
     dependencies:
       rollup: 4.41.0
 

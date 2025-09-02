@@ -1,4 +1,4 @@
-import * as limbo from "@limbo/api";
+import * as limbo from "@limbo-chat/api";
 import {
 	convertMessagesToOpenAICompatible,
 	convertToolIdToOpenAICompatible,
@@ -14,10 +14,23 @@ interface LLMModelConfig {
 	id: string;
 	name: string;
 	description: string;
-	capabilities: limbo.LLM.Capability[];
+	capabilities: string[];
 }
 
 const models: LLMModelConfig[] = [
+	// {
+	// 	id: "chatgpt-4o",
+	// 	name: "ChatGPT-4o",
+	// 	description: "GPT-4o model used in ChatGPT",
+	// 	capabilities: ["tool_calling", "structured_outputs"],
+	// },
+	{
+		id: "gpt-4.1",
+		name: "GPT-4.1",
+		description:
+			"GPT-4.1 excels at instruction following and tool calling, with broad knowledge across domains. It features a 1M token context window, and low latency without a reasoning step.",
+		capabilities: ["tool_calling", "structured_outputs"],
+	},
 	{
 		id: "o4-mini",
 		name: "o4-mini",
@@ -61,6 +74,11 @@ export default {
 				name: model.name,
 				description: model.description,
 				capabilities: model.capabilities,
+				understands: (node) => {
+					// for now, only support text and tool calls
+					// todo, revisit
+					return node.type === "text" || node.type === "tool_call";
+				},
 				chat: async ({ tools, prompt, onText, onToolCall, abortSignal }) => {
 					const apiKey = limbo.settings.get("api_key");
 
